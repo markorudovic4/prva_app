@@ -1,0 +1,58 @@
+name: CI/CD for push on GitHub and create image on AWS ECR
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Docker build for push and pull 
+
+      - name: Docker build backend
+        run: |
+          docker build -t backend:${{ github.sha }} -f ./backend/Dockerfile ./
+
+      - name: Docker build frontend
+        run: |
+          docker build -t frontend:${{ github.sha }} -f ./frontend/Dockerfile ./
+  cd:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_PUSH_ECR_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push backend image to Amazon ECR
+        run: |
+          docker build -t backend:${{ github.sha }} -f ./backend/Dockerfile ./
+          docker tag backend:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/prva_app-backend:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/prva_app-backend:latest
+
+      - name: Build, tag, and push frontend image to Amazon ECR
+        run: |
+          docker build -t frontend:${{ github.sha }} -f ./frontend/Dockerfile ./
+          docker tag frontend:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:latest
