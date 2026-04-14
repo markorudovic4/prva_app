@@ -3,13 +3,13 @@ services:
   backend:
     image: 631595683567.dkr.ecr.eu-north-1.amazonaws.com/markorudovic/prva_app-backend:latest
     ports:
-      - "8000:8000"
+      - "8001:8000"
     restart: unless-stopped
 
   frontend:
     image: 631595683567.dkr.ecr.eu-north-1.amazonaws.com/markorudovic/prva_app-frontend:latest
     ports:
-      - "80:80"
+      - "81:80"
     depends_on:
       - backend
     restart: unless-stopped
