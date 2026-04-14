@@ -57,5 +57,4 @@ jobs:
           docker tag frontend:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:${{ github.sha }}
           docker push ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:${{github.sha }}
       
-      # Test
-      
+      # Test2
