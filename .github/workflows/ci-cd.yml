@@ -21,11 +21,11 @@ jobs:
 
       - name: Docker build backend
         run: |
-          docker build -t backend:${{ github.sha }} -f ./backend/Dockerfile ./
+          docker build -t backend:${{ github.sha }} -f ./backend/Dockerfile ./backend
 
       - name: Docker build frontend
         run: |
-          docker build -t frontend:${{ github.sha }} -f ./frontend/Dockerfile ./
+          docker build -t frontend:${{ github.sha }} -f ./frontend/Dockerfile ./frontend
   cd:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: ci
