@@ -47,12 +47,12 @@ jobs:
 
       - name: Build, tag, and push backend image to Amazon ECR
         run: |
-          docker build -t backend:${{ github.sha }} -f ./backend/Dockerfile ./
-          docker tag backend:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/prva_app-backend:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/prva_app-backend:latest
+          docker build -t backend:${{ github.sha }} -f ./backend/Dockerfile ./backend
+          docker tag backend:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/prva_app-backend:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/prva_app-backend:${{github.sha }}
 
       - name: Build, tag, and push frontend image to Amazon ECR
         run: |
-          docker build -t frontend:${{ github.sha }} -f ./frontend/Dockerfile ./
-          docker tag frontend:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:latest
+          docker build -t frontend:${{ github.sha }} -f ./frontend/Dockerfile ./frontend
+          docker tag frontend:${{ github.sha }} ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:${{ github.sha }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/prva_app-frontend:${{github.sha }}
