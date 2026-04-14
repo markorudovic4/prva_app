@@ -1,14 +1,17 @@
 version: '3.9'
 services:
-  web:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+  backend:
+    image: 631595683567.dkr.ecr.eu-north-1.amazonaws.com/markorudovic/prva_app-backend:latest
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
-      - ./instance:/app/instance
+    restart: unless-stopped
+
+  frontend:
+    image: 631595683567.dkr.ecr.eu-north-1.amazonaws.com/markorudovic/prva_app-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
     environment:
-      - FLASK_ENV=development
-    command: python backend/main.py
+      - REACT_APP_API_URL=http://backend:8000
